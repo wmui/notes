@@ -9,7 +9,4 @@ hero:
     - theme: brand
       text: GitHub
       link: https://github.com/wmui/notes
-  image:
-    src: /rspress-icon.png
-    alt: PPX Logo
 ---

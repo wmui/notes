@@ -5,10 +5,10 @@ export default defineConfig({
   root: path.join(__dirname, "docs"),
   title: "胖胖熊笔记",
   description: "记录我的学习笔记",
-  icon: "/rspress-icon.png",
+  icon: "/logo.png",
   logo: {
-    light: "/rspress-light-logo.png",
-    dark: "/rspress-dark-logo.png",
+    light: "/logo.png",
+    dark: "/logo.png",
   },
   themeConfig: {
     outlineTitle: "目录",
