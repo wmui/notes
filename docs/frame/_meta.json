@@ -1,0 +1,29 @@
+[
+    {
+      "type": "section-header",
+      "label": "Vue框架"
+    },
+    "vue3",
+    "vue-router",
+    "pinia",
+    {
+      "type": "divider",
+      "dashed": true
+    },
+    {
+      "type": "section-header",
+      "label": "React框架"
+    },
+    "react",
+    "react-router",
+    "redux",
+    {
+        "type": "divider",
+        "dashed": true
+    },
+    {
+            "type": "section-header",
+            "label": "其他"
+    },
+    "TypeScript"
+  ]
