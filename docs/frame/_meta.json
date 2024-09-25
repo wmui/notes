@@ -15,7 +15,7 @@
       "label": "React框架"
     },
     "react",
-    "react-router",
+    "react-router-dom",
     "redux",
     {
         "type": "divider",

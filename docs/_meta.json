@@ -1,8 +1,8 @@
 [
   {
-    "text": "JavaScript",
-    "link": "/javascript/promise",
-    "activeMatch": "^/javascript/"
+    "text": "前端",
+    "link": "/frontend/html",
+    "activeMatch": "^/frontend/"
   },{
     "text": "框架库",
     "link": "/frame/vue3",

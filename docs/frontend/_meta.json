@@ -1,0 +1,26 @@
+[
+    {
+      "type": "section-header",
+      "label": "HTML"
+    },
+    "html",
+    {
+      "type": "divider",
+      "dashed": true
+    },
+    {
+      "type": "section-header",
+      "label": "CSS"
+    },
+    "css",
+    {
+        "type": "divider",
+        "dashed": true
+    },
+    {
+          "type": "section-header",
+          "label": "JavaScript"
+    },
+    "promise",
+    "promise2"
+  ]
