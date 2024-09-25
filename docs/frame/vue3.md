@@ -69,7 +69,7 @@ npm create vue@latest
 - 若返回一个**对象**：则对象中的：属性、方法等，在模板中均可以直接使用
 - 若返回一个**函数**：则可以自定义渲染内容，代码如下：
 
-```jsx
+```js
 setup(){
   return ()=> '你好啊！'
 }
@@ -144,7 +144,7 @@ export default {
 
 1. 第一步：`npm i vite-plugin-vue-setup-extend -D`
 2. 第二步：`vite.config.ts`
-```jsx
+```js
 import { defineConfig } from 'vite'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 

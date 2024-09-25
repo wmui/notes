@@ -11,6 +11,7 @@
     "rspress": "^1.29.0"
   },
   "devDependencies": {
+    "@rspress/plugin-preview": "1.29.0",
     "@types/node": "^16"
   }
 }
