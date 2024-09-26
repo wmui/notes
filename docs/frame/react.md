@@ -743,8 +743,109 @@ componentWillUnmount()，由ReactDOM.unmountComponentAtNode()触发
 
 #### 示例
 
-<code src="../components/react_life_new.jsx"></code>
+```jsx
+import React from 'react'
+import ReactDOM from 'react-dom'
 
+class Count extends React.Component{
+    state = {count:0}
+
+    constructor(props){
+        console.log('Count---constructor');
+        super(props)
+        //初始化状态
+    }
+    //加1按钮的回调
+    add = ()=>{
+        //获取原状态
+        const {count} = this.state
+        //更新状态
+        this.setState({count:count+1})
+    }
+
+    //卸载组件按钮的回调
+    death = ()=>{
+        ReactDOM.unmountComponentAtNode(document.getElementById('test'))
+    }
+
+    //强制更新按钮的回调
+    force = ()=>{
+        this.forceUpdate()
+    }
+    
+    
+    // 初始挂载执行一次，props/state改变n次，执行1+n次
+    // 强制更新也会执行
+    static getDerivedStateFromProps(props,state){
+        console.log('getDerivedStateFromProps',props,state);
+        return null
+    }
+
+    // 获取上次的更新快照，数据被componentDidUpdate钩子的最后一个参数接受
+    // 初始时没有上次的快照，只要有快照就会执行。强制更新也会执行
+    getSnapshotBeforeUpdate(){
+        console.log('getSnapshotBeforeUpdate');
+        return 'hello'
+    }
+
+    //组件挂载完毕的钩子
+    componentDidMount(){
+        console.log('Count---componentDidMount');
+    }
+
+    //组件将要卸载的钩子
+    componentWillUnmount(){
+        console.log('Count---componentWillUnmount');
+    }
+
+    //控制组件更新的“阀门”
+    shouldComponentUpdate(){
+        console.log('Count---shouldComponentUpdate');
+        return true
+    }
+
+    //组件更新完毕的钩子
+    componentDidUpdate(preProps,preState,snapshotValue){
+        console.log('Count---componentDidUpdate',preProps,preState,snapshotValue);
+    }
+    
+    render(){
+        console.log('Count---render');
+        const {count} = this.state
+        return(
+            <div>
+                <h2>当前求和为：{count}</h2>
+                <button onClick={this.add}>点我+1</button>&nbsp;&nbsp;&nbsp;
+                <button onClick={this.death}>卸载组件</button>&nbsp;&nbsp;&nbsp;
+                <button onClick={this.force}>不更改任何状态中的数据，强制更新一下</button>
+            </div>
+        )
+    }
+}
+
+class Demo extends React.Component {
+    state = {
+        count: 0,
+    }
+    
+     change = () => {
+        this.setState({
+            count: this.state.count + 1
+        })
+    }
+    render() {
+        return (
+            <div>
+                <p>{this.state.count}</p>
+                <button onClick={ this.change}>click</button>
+                <Count count={this.state.count}/>
+            </div>
+        )
+    }
+}
+
+export default Demo
+```
 
 #### getSnapshotBeforeUpdate示例
 
@@ -951,3 +1052,480 @@ export default class List extends Component {
 	}
 }
 ```
+
+## setState
+
+### 对象式的setState
+
+`setState(stateChange, [callback])`
+
+1.stateChange为状态改变对象(该对象可以体现出状态的更改)
+2.callback是可选的回调函数, 它在状态更新完毕、界面也更新后(render调用后)才被调用
+
+### 函数式的setState
+
+`setState(updater, [callback])`
+
+1.updater为返回stateChange对象的函数。
+2.updater可以接收到state和props。
+3.callback是可选的回调函数, 它在状态更新、界面也更新后(render调用后)才被调用。
+
+对象式的setState是函数式的setState的简写方式(语法糖)
+
+**使用原则：**
+
+> (1).如果新状态不依赖于原状态 ===> 使用对象方式
+> (2).如果新状态依赖于原状态 ===> 使用函数方式
+> (3).如果需要在setState()执行后获取最新的状态数据, 要在第二个callback函数中读取
+
+## lazyLoad
+
+通过React的lazy函数配合`import()`函数动态加载路由组件，路由组件代码会被分开打包，在渲染对应路由时加载对应组件。
+
+
+
+
+```js
+import {lazy} from 'React'
+const Login = lazy(()=>import('@/pages/Login'))
+
+// 通过<Suspense>指定在加载得到路由打包文件前，显示一个自定义loading界面
+<Suspense fallback={<h1>loading.....</h1>}>
+	<Switch>
+		<Route path="/xxx" component={Xxxx}/>
+		<Redirect to="/login"/>
+	</Switch>
+</Suspense>
+```
+
+## hooks
+
+Hook是React 16.8.0版本增加的新特性/新语法，可以让你在函数组件中使用 state 以及其他的React特性
+
+### useState
+
+React.useState()，让函数组件也可以有state状态, 并进行状态数据的读写操作
+
+```js
+const [xxx, setXxx] = React.useState(initValue) 
+```
+
+**参数:** 第一次初始化指定的值在内部作缓存
+**返回值:** 包含2个元素的数组, 第1个为内部当前状态值, 第2个为更新状态值的函数
+
+**setXxx()2种写法:**
+setXxx(newValue): 参数为非函数值, 直接指定新的状态值, 内部用其覆盖原来的状态值
+setXxx(value => newValue): 参数为函数, 接收原本的状态值, 返回新的状态值, 内部用其覆盖原来的状态值
+
+```js
+export const Demo = function() {
+	console.log('demo'); // 执行1+n次，第一次是初始化，n是点击次数
+	const [count, setCount] = React.useState(0)
+	function add() {
+		setCount(count + 1)
+	}
+	return (
+		<div>
+			<p>{count}</p>
+			<button onClick={add}>click</button>
+		</div>
+	)
+}
+```
+
+### useEffect
+
+Effect Hook 可以让你在函数组件中执行副作用操作(用于模拟类组件中的生命周期钩子)。
+
+副作用函数：该函数执行会改变外部数据，是相对于纯函数而言的。
+纯函数：该函数的执行不影响外部数据
+
+副作用函数示例：
+
+```js
+let obj = {age: 19}
+function add(o) {
+    o.age += 1
+}
+add(obj)
+console.log(obj)
+```
+
+```js
+useEffect(() => { 
+    // 在此可以执行任何带副作用操作，相当于componentDidMount，render时先执行一次
+    // [stateValue]变化时也会执行，相当于componentDidUpdate()
+
+    return () => { // 如果返回一个函数，会在组件卸载前执行
+        // 在此做一些收尾工作, 比如清除定时器/取消订阅等，相当于componentWillUnmount
+    }
+}, [stateValue]) //如果不指定，监视所有的state的变化； 如果指定的是[]，相当于不监视任何state变化； 如果有指定具体state值，那么只监视指定的值的变化
+```
+**参数：** 第一个参数是一个函数，用于执行任何带副作用的操作；第二个参数要监视变化的数据数组。
+
+```js
+//  该组件每隔一秒加一
+export const Demo = function() {
+	const [count, setCount] = React.useState(0)
+
+    // 卸载组件
+    function remove() {
+        ReactDOM.unmountComponentAtNode(document.getyElementById('root'))
+    }
+    React.useEffect(() => {
+        let timer = setInterval(() => {
+            setCount(count + 1)
+        }, 1000)
+
+        // 卸载组件前清楚定时器
+        return () => {
+            clearInterval(timer)
+        }
+    }, []); // 不监视任何数据，这样副作用函数只执行一次
+
+
+	return (
+		<div>
+			<p>{count}</p>
+			<button onClick={remove}>卸载组件</button>
+		</div>
+	)
+}
+```
+
+### useRef
+
+Ref Hook可以在函数组件中存储/查找组件内的标签或任意其它数据。功能与React.createRef()一样，写法有点差别。
+
+```js
+export const Demo = function() {
+	const myRef = React.useRef()
+	function tip() {
+		alert(myRef.current.value)
+	}
+
+
+	return (
+		<div>
+			<input type="text" ref="myRef" />
+			<button onClick={tip}>点击提示数据</button>
+		</div>
+	)
+}
+```
+
+
+## Fragment
+
+Fragment可以在写jsx时不用必须有一个真实的DOM根标签了，两种写法：
+
+```jsx
+render() {
+    return (
+       <Fragment>
+            <p>hello</p>
+            <p>hello</p>
+        <Fragment>
+    )
+}
+
+render() {
+    return (
+       <>
+            <p>hello</p>
+            <p>hello</p>
+        </>
+    )
+}
+```
+
+## context
+
+一种组件间通信方式， 用于【祖组件】与【后代组件】间通信。在应用开发中一般不用context, 一般都用它的封装react插件
+
+```jsx
+import React, { Component } from 'react'
+import './index.css'
+
+//创建Context对象
+const MyContext = React.createContext()
+const {Provider,Consumer} = MyContext
+export default class A extends Component {
+
+	state = {username:'tom',age:18}
+
+	render() {
+		const {username,age} = this.state
+		return (
+			<div className="parent">
+				<h3>我是A组件</h3>
+				<h4>我的用户名是:{username}</h4>
+				<Provider value={{username,age}}>
+					<B/>
+				</Provider>
+			</div>
+		)
+	}
+}
+
+class B extends Component {
+	render() {
+		return (
+			<div className="child">
+				<h3>我是B组件</h3>
+				<C/>
+			</div>
+		)
+	}
+}
+
+/* class C extends Component {
+	//声明接收context，该方式仅用于类组件
+	static contextType = MyContext
+	render() {
+		const {username,age} = this.context
+		return (
+			<div className="grand">
+				<h3>我是C组件</h3>
+				<h4>我从A组件接收到的用户名:{username},年龄是{age}</h4>
+			</div>
+		)
+	}
+} */
+
+// 该方式用于函数式组件
+function C(){
+	return (
+		<div className="grand">
+			<h3>我是C组件</h3>
+			<h4>我从A组件接收到的用户名:
+			<Consumer>
+				{value => `${value.username},年龄是${value.age}`}
+			</Consumer>
+			</h4>
+		</div>
+	)
+}
+```
+
+## 组件优化
+
+**问题一**
+
+只要执行setState()，即使不改变状态数据， 组件也会重新render()
+
+**问题二**
+
+只要当前组件重新render()，就会自动重新render子组件，纵使子组件没有用到父组件的任何数据，因为Component中的shouldComponentUpdate()总是返回true
+
+**解决思路**
+
+只有当组件的state或props数据发生改变时才重新render()
+
+方案一：重写shouldComponentUpdate()方法，比较新旧state或props数据, 如果有变化才返回true, 如果没有返回false（有些麻烦）
+
+方案二：使用PureComponent，PureComponent重写了shouldComponentUpdate(), 只有state或props数据有变化才返回true。注意这里的变化底层是浅比较，只改内部值不会触发更新。
+
+```js
+import React, { PureComponent } from 'react'
+export default class Parent extends PureComponent {
+	state = {
+        obj: {age: 18}
+    }
+
+    add = () => {
+        const obj = state.obj
+        obj.age = 19
+        // 不会触发更新，因为obj和state.obj是一个地址
+        this.setState(obj)
+    }
+
+    add2  = () => {
+        // 会更新
+        this.setState({obj: { age: 19}})
+    }
+}
+```
+
+## 组件标签体内容
+
+组件标签内容传递给子组件有两种方式：`children props`和`render props`，类似于vue中的slot。
+
+### children props
+
+通过组件标签体传入结构
+
+```jsx
+export default class Parent extends Component {
+	render() {
+		return (
+			<div className="parent">
+				<h3>我是Parent组件</h3>
+				<A>
+                    <B/>
+                </A>
+			</div>
+		)
+	}
+}
+
+class A extends Component {
+	render() {
+		console.log(this.props);
+		const {name} = this.state
+		return (
+			<div className="a">
+				<h3>我是A组件</h3>
+                {/* 标签体内容 */}
+				{this.props.children}
+			</div>
+		)
+	}
+}
+
+
+class B extends Component {
+	render() {
+		return (
+			<div className="b">
+				<h3>我是B组件</h3>
+			</div>
+		)
+	}
+}
+```
+
+这种方式比较简单，但是A组件无法向B组件传递数据
+
+### render props
+
+```jsx
+
+export default class Parent extends Component {
+	render() {
+		return (
+			<div className="parent">
+				<h3>我是Parent组件</h3>
+				{/* B是A的子组件 */}
+				<A render={(name)=><B name={name}/>}/>
+			</div>
+		)
+	}
+}
+
+class A extends Component {
+	state = {name:'tom'}
+	render() {
+		console.log(this.props);
+		const {name} = this.state
+		return (
+			<div className="a">
+				<h3>我是A组件</h3>
+				{/* B组件的位置，传递数据的位置 */}
+				{this.props.render(name)}
+			</div>
+		)
+	}
+}
+
+class B extends Component {
+	render() {
+		return (
+			<div className="b">
+				<h3>我是B组件,{this.props.name}</h3>
+			</div>
+		)
+	}
+}
+```
+
+名字不一定叫`render`，习惯上用render属性名
+
+## 错误边界
+
+错误边界(Error boundary)：用来捕获后代组件错误，渲染出备用页面。只能捕获后代组件生命周期产生的错误（主要是render错误），不能捕获自己组件产生的错误和其他组件在合成事件、定时器中产生的错误
+
+```jsx title="parent.jsx"
+import React, { Component } from 'react'
+import Child from './Child'
+
+export default class Parent extends Component {
+
+	state = {
+		hasError:'' //用于标识子组件是否产生错误
+	}
+
+	//当Parent的子组件出现报错时候，会触发getDerivedStateFromError调用，并携带错误信息（开发环境下仍会显示错误页面）
+	static getDerivedStateFromError(error){
+		console.log('@@@',error);
+		return {hasError:error}
+	}
+
+	componentDidCatch(){
+		console.log('此处统计错误，反馈给服务器，用于通知编码人员进行bug的解决');
+	}
+
+	render() {
+		return (
+			<div>
+				<h2>我是Parent组件</h2>
+				{this.state.hasError ? <h2>当前网络不稳定，稍后再试</h2> : <Child/>}
+			</div>
+		)
+	}
+}
+```
+
+```jsx title="Child.jsx"
+import React, { Component } from 'react'
+
+export default class Child extends Component {
+	state = {
+		// users:[
+		// 	{id:'001',name:'tom',age:18},
+		// 	{id:'002',name:'jack',age:19},
+		// 	{id:'003',name:'peiqi',age:20},
+		// ]
+		users:'abc'
+	}
+
+	render() {
+		return (
+			<div>
+				<h2>我是Child组件</h2>
+				{
+					this.state.users.map((userObj)=>{
+						return <h4 key={userObj.id}>{userObj.name}----{userObj.age}</h4>
+					})
+				}
+			</div>
+		)
+	}
+}
+```
+
+## 组件通信
+
+组件间的关系有下面几种：
+
+- 父子组件
+- 兄弟组件（非嵌套组件）
+- 祖孙组件（跨级组件）
+
+组件间的通信方式：
+
+1.props：
+    (1).children props
+    (2).render props
+2.消息订阅-发布：
+    pubsub-js、event等等
+3.集中式管理：
+    redux、dva等等
+4.conText:
+    生产者-消费者模式
+
+搭配方式：
+
+父子组件：props
+兄弟组件：消息订阅-发布、集中式管理
+祖孙组件(跨级组件)：消息订阅-发布、集中式管理、conText(开发用的少，封装插件用的多)
