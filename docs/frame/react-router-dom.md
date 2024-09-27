@@ -368,3 +368,436 @@ render() {
 	}
 export default withRouter(Header)
 ```
+
+## react-router-dom@6
+
+### 注册路由
+
+注册路由时需要使用`rotues`组件包裹，属性名改为`element`
+
+```js
+import {NavLink,Routes,Route} from 'react-router-dom'
+
+<Routes>
+	<Route path="/about" element={<About/>}/>
+	<Route path="/home" element={<Home/>}/>
+</Routes>
+```
+
+### 重定向
+
+使用`<Navigate/>`组件进行重定向
+
+```jsx
+import {NavLink,Routes,Route,Navigate} from 'react-router-dom'
+
+<Routes>
+	<Route path="/home" element={<Home/>}/>
+	<Routes path="/" element={<Navigate to="/home"/>}/>
+</Routes>
+```
+
+### NavLink高亮
+
+NavLink高亮时可以指定类名
+
+```jsx
+
+function computedClassName({isActive}){
+	return isActive ? 'list-group-item atguigu' : 'list-group-item'
+}
+
+render() {
+	return (
+		<div>
+			<NavLink className={computedClassName} to="/about">About</NavLink>
+				<NavLink className={computedClassName} to="/home">Home</NavLink>
+			</div>
+	)
+}
+```
+
+### 路由表
+
+可以通过路由表统一管理路由
+
+```js title="routes/index.js"
+import About from '../pages/About'
+import Home from '../pages/Home'
+import {Navigate} from 'react-router-dom'
+
+export default [
+	{
+		path:'/about',
+		element:<About/>
+	},
+	{
+		path:'/home',
+		element:<Home/>
+	},
+	{
+		path:'/',
+		element:<Navigate to="/about"/>
+	}
+]
+```
+
+```jsx
+import React from 'react'
+import {NavLink,useRoutes} from 'react-router-dom'
+import routes from './routes'
+
+export default function App() {
+  //根据路由表生成对应的路由规则
+	const element = useRoutes(routes)
+
+  return (
+    <div>
+        <div>
+          <NavLink className="list-group-item" to="/about">About</NavLink>
+					<NavLink className="list-group-item" to="/home">Home</NavLink>
+        </div>
+
+        <div>
+					{element}
+        </div>
+    </div>
+  )
+}
+```
+
+### 嵌套路由
+
+通过Children属性配置嵌套路由，通过`<Outlet/>`组件指定子路由的位置。
+
+```js
+export default [
+	{
+		path:'/about',
+		element:<About/>
+	},
+	{
+		path:'/home',
+		element:<Home/>,
+		children:[
+			{
+				path:'news',
+				element:<News/>
+			},
+			{
+				path:'message',
+				element:<Message/>
+			}
+		]
+	},
+	{
+		path:'/',
+		element:<Navigate to="/about"/>
+	}
+]
+```
+
+```jsx title="pages/home.jsx"
+import React from 'react'
+import {NavLink,Outlet} from 'react-router-dom'
+
+export default function Home() {
+	return (
+		<div>
+			<h2>Home组件内容</h2>
+			<div>
+				<ul className="nav nav-tabs">
+					<li>
+						<NavLink className="list-group-item" to="news">News</NavLink>
+					</li>
+					<li>
+						<NavLink className="list-group-item" to="message">Message</NavLink>
+					</li>
+				</ul>
+				{/* 指定子路由组件呈现的位置 */}
+				<Outlet />
+			</div>
+		</div>
+	)
+}
+```
+
+### params参数
+
+使用useParams钩子获取params参数
+
+```js title="routes/index.js"
+
+export default [
+	{
+		path:'/about',
+		element:<About/>
+	},
+	{
+		path:'/home',
+		element:<Home/>,
+		children:[
+			{
+				path:'news',
+				element:<News/>
+			},
+			{
+				path:'message',
+				element:<Message/>,
+				children:[
+					{
+            // 参数路由
+						path:'detail/:id/:title/:content',
+						element:<Detail/>
+					}
+				]
+			}
+		]
+	},
+]
+```
+
+```jsx title="pages/Detail.jsx"
+import React from 'react'
+import {useParams,useMatch} from 'react-router-dom'
+
+export default function Detail() {
+	const {id,title,content} = useParams()
+	return (
+		<ul>
+			<li>消息编号：{id}</li>
+			<li>消息标题：{title}</li>
+			<li>消息内容：{content}</li>
+		</ul>
+	)
+}
+```
+### search参数
+
+使用useSearchParams钩子获取search参数
+
+
+```jsx title="pages/Detail.jsx"
+import React from 'react'
+import {useSearchParams,useLocation} from 'react-router-dom'
+
+export default function Detail() {
+	const [search,setSearch] = useSearchParams()
+	const id = search.get('id')
+	const title = search.get('title')
+	const content = search.get('content')
+	return (
+		<ul>
+			<li>
+				<button onClick={()=>setSearch('id=008&title=哈哈&content=嘻嘻')}>点我更新一下收到的search参数</button>
+			</li>
+			<li>消息编号：{id}</li>
+			<li>消息标题：{title}</li>
+			<li>消息内容：{content}</li>
+		</ul>
+	)
+}
+```
+
+### state参数
+
+使用useLocation钩子获取state参数
+
+```js
+<ul>
+    {
+      messages.map((m)=>{
+        return (
+          // 路由链接
+          <li key={m.id}>
+            <Link 
+              to="detail" 
+              state={{
+                id:m.id,
+                title:m.title,
+                content:m.content,
+              }}
+            >{m.title}</Link>
+          </li>
+        )
+      })
+    }
+</ul>
+```
+
+```jsx
+import React from 'react'
+import {useLocation} from 'react-router-dom'
+
+export default function Detail() {
+	const {state:{id,title,content}} = useLocation()
+	return (
+		<ul>
+			<li>消息编号：{id}</li>
+			<li>消息标题：{title}</li>
+			<li>消息内容：{content}</li>
+		</ul>
+	)
+}
+```
+
+### 编程式导航
+
+使用useNavigate钩子实现编程式路由导航
+
+一般组件:
+
+```js
+import React from 'react'
+import {useNavigate} from 'react-router-dom'
+
+export default function Header() {
+	const navigate = useNavigate()
+
+	function back(){
+		navigate(-1)
+	}
+	function forward(){
+		navigate(1)
+	}
+
+	return (
+		<div className="col-xs-offset-2 col-xs-8">
+			<div className="page-header">
+				<h2>React Router Demo</h2>
+				<button onClick={back}>←后退</button>
+				<button onClick={forward}>前进→</button>
+			</div>
+		</div>
+	)
+}
+```
+
+```jsx
+import {Link,Outlet,useNavigate} from 'react-router-dom'
+
+export default function Message() {
+	const navigate = useNavigate()
+  function showDetail(m){
+    // search和params参数直接写在路径上'/detail?id=xx&title=xx'
+		navigate('detail',{
+			replace:false,
+			state:{
+				id:m.id,
+				title:m.title,
+				content:m.content
+			}
+		})
+	}
+
+  render() {
+    return (
+      <button onClick={()=>showDetail({id:'001',title:'消息1',content:'锄禾日当午'})}>查看详情</button>
+    )
+  }
+}
+```
+
+### useInRouterContext
+
+useInRouterContext()判断当前组件是否在路由上下文环境中，返回一个布尔值，只要是被包裹的都在路由环境中。
+
+```js title="App.jsx"
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {BrowserRouter} from 'react-router-dom'
+import App from './App'
+import Demo from './components/Demo'
+
+ReactDOM.render(
+	<div>
+    {/* Demo没有被包裹 */}
+		<Demo/> 
+		<BrowserRouter>
+			<App/>
+		</BrowserRouter>
+	</div>,
+	document.getElementById('root')
+)
+```
+
+```jsx title="components/Demo.jsx"
+import React from 'react'
+import {useInRouterContext} from 'react-router-dom'
+
+export default function Demo() {
+	console.log(useInRouterContext())
+	return (
+		<div>Demo</div>
+	)
+}
+```
+
+### useNavigationType
+
+1. 作用：返回当前的导航类型（用户是如何来到当前页面的）。
+2. 返回值：`POP`、`PUSH`、`REPLACE`。
+3. 备注：`POP`是指在浏览器中直接打开了这个路由组件（刷新页面）。
+
+
+```jsx title="News.jsx"
+import React from 'react'
+import {useNavigationType} from 'react-router-dom'
+
+export default function Demo() {
+	console.log(useNavigationType())
+	return (
+		<div>Demo</div>
+	)
+}
+```
+
+###  useOutlet()
+
+用来获取当前组件中渲染的嵌套路由，如果嵌套路由没有挂载,则result为null；如果嵌套路由已经挂载，则展示嵌套的路由对象。
+
+```jsx
+import React from 'react'
+import {NavLink,Outlet,useOutlet} from 'react-router-dom'
+
+
+export default function Home() {
+	console.log('###',useOutlet())
+	return (
+		<div>
+			<h2>Home组件内容</h2>
+			<div>
+				<ul className="nav nav-tabs">
+					<li>
+						<NavLink className="list-group-item" replace to="news">News</NavLink>
+					</li>
+					<li>
+						<NavLink className="list-group-item" to="message">Message</NavLink>
+					</li>
+				</ul>
+				{/* 指定路由组件呈现的位置 */}
+				<Outlet />
+			</div>
+		</div>
+	)
+}
+```
+
+### useResolvedPath
+
+给定一个 URL值，解析其中的：path、search、hash值。
+
+```jsx
+import React from 'react'
+import {useResolvedPath} from 'react-router-dom'
+
+export default function News() {
+	console.log('@@',useResolvedPath('/user?id=001&name=tom#qwe'))
+  // {pathname: '/user', search: '?id=001&name=tom', hash: '#qwe'}
+	return (
+		<ul>
+			<li>news001</li>
+		</ul>
+	)
+}
+```
