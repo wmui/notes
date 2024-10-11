@@ -23,6 +23,7 @@
           "type": "section-header",
           "label": "JavaScript"
     },
+    "module",
     "promise",
     "promise2"
   ]
