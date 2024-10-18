@@ -365,6 +365,36 @@ console.log(f instanceof Object); // true
  console.log(Function.prototype)
  ```
 
+### 继承
+
+使用原型链和构造函数，实现组合继承。
+
+```js
+function Person(name, age) {
+ this.name = name
+ this.age = age
+}
+
+Person.prototype.setName = function (name) {
+ this.name = name
+}
+
+function Student(name, age, price) {
+ Person.call(this, name, age)  // 为了得到属性
+ this.price = price
+}
+Student.prototype = new Person() // 原型修改为Person的实例（原本是Object的实例）
+Student.prototype.constructor = Student //修正constructor属性
+Student.prototype.setPrice = function (price) {
+ this.price = price
+}
+
+var s = new Student('Tom', 24, 15000)
+s.setName('Bob')
+s.setPrice(16000)
+console.log(s.name, s.age, s.price)
+```
+
 ## 执行上下文
 
 执行上下文就是当前代码的执行环境，这个环境通常会在代码执行前后完成一些其他操作，如执行前的预数据处理，执行后的垃圾回收。执行上下文可以分为全局执行上下文和局部（函数）执行上下文，执行上下文是动态的, 调用函数时创建, 函数调用结束时就会自动释放
@@ -652,10 +682,9 @@ var name2 = "The Window";
 var object2 = {
  name2 : "My Object",
  getNameFunc : function(){
- //此处的this指向是[getNameFunc],他是对象中的属性,所以this指向就是object
    var that = this;
+   // 产生闭包
    return function(){
-     //此处用的是保存的  that
      return that.name2;
    };
  }
@@ -727,3 +756,165 @@ for (var i = 0; i < 10000; i++) {
  f()
  // f = null
  ```
+
+## 进程和线程
+
+![](../public/jsh2.png)
+
+**进程：** 操作系统分配给软件运行的独立内存空间，有些软件可以启动多个实例，每个实例分配一个进程，这种软件被称为多进程软件。进程之间的数据是不能共享的，内存相互隔离。
+
+**线程：** 进程中的独立执行单元，是程序运行的一个完整流程，代码必需在线程中执行。线程是CPU的最小调度单位。一个进程中可以运行多个线程，线程之间是的数据是可以共享的，这种共享方式被称作线程间通信。
+
+**线程池：** 保存多个线程对象的容器，实现线程对象的反复利用
+
+**主线程**：程序必定运行在某个进程的某个线程上，一个进程中至少有一个线程，这个线程被称为主线程。
+
+
+Chrome浏览器是一个多进程的软件，JS是一种单线程的编程语言。单线程的优点是编程简单，缺点是效率低，不能有效利用CPU，如果代码中有耗时的运算，就会感觉程序像卡住了。如果是多线程的语言，可以把计算让分线程执行，不影响主线程的程序运行，分线程把计算结果告诉主线程就可以了。多线程优点是能有效利用CPU，但是相应的也增加了编码难度。
+
+JS为什么不设计成多线程的？JS作为浏览器脚本语言，这种语言最初的用途是为了和用户互动以及操作DOM，如果设计成多线程的，会带来复杂的同步问题：如果我们要先更新然后再删除一个节点，单线程这么做没问题；但是多线程，更新和删除如果是删除先完成了，更新就会出错。
+
+## 浏览器内核
+
+以Chrome为例，Chrome浏览器是多进程、多线程的软件，在运行程序时，主线程和分线程各司其职：
+
+#### 主线程
+
+- JS引擎模块：负责JS的编译和运行
+- HTML/CSS文档解析模块：负责页面文本的解析
+- DOM/CSSOM模块：负责DOM和CSSOM在内存中的相关处理
+- 布局和渲染模块：负责页面的布局和效果绘制
+
+#### 分线程
+
+- 定时器模块: 负责定时器的管理
+- 网络请求模块: 负责服务器请求
+- 事件响应模块: 负责事件的管理
+
+## 事件循环模型（Event Loop）
+
+JavaScript是一种**单线程、非阻塞**的编程语言，上面说了单线程，接下来说说非阻塞。
+
+**非阻塞：** 当代码执行遇到异步任务时（通常是需要花费时间才有结果的任务），主线程会挂起这个任务，等异步任务有结果的时候，主线程再根据规则执行回调，这个规则就是事件循环模型。
+
+![](../public/jsh4.png)
+
+**事件队列：** 所有被挂起的任务会被放到一个队列中，这个队列被称为事件队列，队列是一种先进先出的数据结构。
+
+**事件循环：** 主线程在执行过程中，会把同步任务放到执行栈中，异步任务放到事件队列中（图中的webAPIs）。当栈中的同步任务执行完毕，他就会把事件队列中的任务放到执行栈中一次一个的执行，等到事件队列和栈都没有任务了就休眠。
+
+**宏任务和微任务：** 异步任务可以分为宏任务和微任务，宏任务统一放到宏任务队列管理，微任务统一放到微任务队列管理。主线程每次准备取出一个宏任务执行前，都要将所有的微任务一个一个取出来执行。
+
+- 宏任务：DOM Events、AJAX、setTimeout、setInterval、requestAnimationFrame、I/O
+- 微任务：Promise 回调、process.nextTick（node独有）、MutationObserver、queueMicrotask
+
+```js
+  // 宏任务中有微任务
+  setTimeout(() => { 
+    console.log(1)
+    Promise.resolve().then(() => console.log(2))
+  })
+
+  // 宏任务
+  setTimeout(() => { 
+    console.log(3)
+  })
+
+  // 微任务中有宏任务
+  Promise.resolve().then(() => {
+      console.log(4)
+      setTimeout(() => {
+          console.log(5)
+      })
+  })
+
+  // 微任务
+  Promise.resolve().then(() => {
+      console.log(6)
+  })
+
+  // 同步任务
+  console.log('hello')
+
+  // hello (同步) 4（微） 6（微）1（宏）2（宏中微）3（宏）5（微中宏）
+```
+
+## Web Worker
+
+Web Workers是JS中的分线程方案，可以实现主线程和分线层的通信。Worker中不能操作DOM、不能跨域加载JS。
+
+**小示例**：输入框输入数字n，获取第n个斐波那契数的值，当n的值比加大时，程序感觉像卡住了。
+
+
+```html
+/<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" placeholder="数值" id="number" />
+    <button id="btn">计算</button>
+    <script type="text/javascript">
+      // 1 1 2 3 5 8    f(n) = f(n-1) + f(n-2)
+      function fibonacci(n) {
+        return n <= 2 ? 1 : fibonacci(n - 1) + fibonacci(n - 2);
+      }
+
+      var input = document.getElementById("number");
+      var btn =  document.getElementById("btn");
+      btn.getElementById("btn").onclick = function () {
+        var number = input.value;
+        var result = fibonacci(number);
+        alert(result);
+      };
+    </script>
+  </body>
+</html>
+ ```
+
+**优化版：** 使用Worker，把计算放到分线程，有结果后通知主线程
+
+```js title="worker.js"
+function fibonacci(n) {
+  return n <= 2 ? 1 : fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// console.log(this);
+this.onmessage = function (event) {
+  var number = event.data;
+  var result = fibonacci(number);
+  this.postMessage(result);
+};
+```
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input type="text" placeholder="数值" id="number" />
+    <button id="btn">计算</button>
+    <script type="text/javascript">
+      var input = document.getElementById("number");
+      var btn = document.getElementById("btn");
+      var worker = new Worker("./worker.js");
+
+      btn.onclick = function () {
+        var number = input.value;
+        worker.postMessage(number);
+      };
+
+      worker.onmessage = function (event) {
+        alert(event.data);
+      };
+    </script>
+  </body>
+</html>
+```
