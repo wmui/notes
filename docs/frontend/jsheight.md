@@ -6,11 +6,13 @@ JavaScript是一种弱类型编程语言，变量没有类型。
 
 ## 数据类型
 
-**值类型：** String、Number、Boolean、undefined、null
+**原始类型：** String、Number、Boolean、undefined、null
 
-**引用类型：** Object（任意对象）、Function（可以执行的对象）、Array（key为索引的对象）
+**对象类型：** Object（任意对象）、Function（可以执行的对象）、Array（key为索引的对象）
 
-undefined和null类型比较特殊，他们的值只能是他自身，只有一个值
+undefined和null类型比较特殊，他们的值只能是他自身，只有一个值。
+
+原始类型也可以叫做**不可变类型**，对象类型叫做**可变类型**，他们的值都存在堆内存中，变量中存储的只是一个内存地址。
 
 #### typeof类型判断
 
@@ -58,8 +60,8 @@ function getType(val) {
   return typeof val;
 }
 
-// string number boolean null undefined array object function
-console.log(getType('hello'), getType(1), getType(true), getType(null), getType(undefined), getType([]), getType({}), getType(getType))
+// string number boolean null undefined array object function symbol
+console.log(getType('hello'), getType(1), getType(true), getType(null), getType(undefined), getType([]), getType({}), getType(getType),getType(Symbol()))
 ```
 
 #### undefined和null区别
@@ -75,19 +77,43 @@ console.log(a) // null
 
 ## 变量
 
-每个变量在内存中对应一小块存储空间，变量名用来查找这块内存（通过内存地址），变量值就是内存中保存的数据。
+每个变量在内存中对应一小块存储空间，变量名用来查找这块内存（通过内存地址）。
 
-内存可以简单分为堆内存和栈内存，堆中存储对象，栈中存储变量（全局变量和局部变量）。
+内存可以简单分为堆内存和栈内存，堆中存储数据（变量的值），栈中存储变量（全局变量和局部变量）。
 
-**值类型的变量：** 数据存储在栈中，栈中变量存储的数据就是这个数据本身
-**引用类型的变量：** 数据存储在堆中，栈中变量存储的数据是一个堆中的地址。
+无论是原始类型数据还是对象类型数据，赋值时本质都是赋值内存地址给变量。不同点在于原始值是不可变的，所以无法通过这个地址值修改数据；对象值是可变的，可以通过地址值修改数据。
+
+```js
+var a = 10; // 假设数字10的内存地址是0x01
+var b = a; // 数字10在内存中已经存在，b中存储的地址也是0x01
+console.log(a === b); // 因为地址值是一样的，所以他们相等
+a = 11;
+console.log(b); // 由于数字是不可变的类型，所以无法通过0x01修改原地址的10为11；于是在内存中创建数字11，假设地址值是0x02，然后赋值给变量a；变量b存储的还是0x01，所以值是10
+```
+
+```js
+var a = {name: 'wmui'};
+var b = a;
+console.log(a === b);
+a = {name: 'hello'};
+console.log(b); // a中存储的新的地址值，b中存储的是旧的地址值，所以结果是：{name: 'wmui'}
+```
+
+```js
+var a = {name: 'wmui'};
+var b = a;
+console.log(a === b);
+a.name = 'hello';
+console.log(b); // a中存储的地址值未发生过改变，只是根据这个地址值修改了name的值，所以结果是：{name: 'hello'}
+```
 
 #### 函数参数是地址值传递
 
 ```js
 var a = {name: 'wmui'};
+
 function fn(val) {
-val.age = 18
+  val.age = 18
 }
 
 fn(a);
@@ -100,14 +126,14 @@ console.log(a.age); // 18
 
 **局部变量：** 函数执行完毕后自动释放内存
 
-**全局变量：** 基本值不回收；引用值成为垃圾对象后（没有变量引用这个对象），由垃圾回收器回收。
+**全局变量：** 没有变量指向这个数据时，由垃圾回收器回收。
 
 ```js
-var a = 3; // 全局变量a不会释放内存
-var obj = {name:"hong"};
-obj = undefined || null  // 此时obj没有被释放，但是之前声明的`{name:"hong"}`由于没有人指向它,会在后面你某个时刻被垃圾回收器回收
+var a = 3; // a指向数字3，不会释放内存
+var obj = {name:"wmui"};
+obj = undefined || null  // 由于没有变量指向 {name:"wmui"}，它会在某个时刻被垃圾回收器回收，但obj不会被回收
 
-// b是自动释放, b所指向的对象是在后面的某个时刻由垃圾回收器回收
+// b所指向的对象是在函数执行完后，在某个时刻由垃圾回收器回收
 function fn () { var b = {}}
 fn()
 ```
@@ -331,6 +357,26 @@ console.log(f instanceof Object); // true
  console.log(Object instanceof Object) // true
  console.log(Function instanceof Function) // true
  console.log(Function instanceof Object) // true
+```
+
+### new运算符
+
+当我们使用new运算符调用函数时，发生了什么？
+
+1. 在构造函数内部创建了一个空实例对象
+2. 实例对象的隐式原型指向构造函数的显式原型
+3. 修改构造函数this，指向为实例对象
+4. 返回实例
+
+```js
+function Fun() {
+  // var instance = {};
+  // instance.__proto__ = Fun.prototype;
+  // this = instance;
+  // return this
+}
+
+const instance = new Fun()
 ```
 
 ### 测试题
