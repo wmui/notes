@@ -2,8 +2,6 @@
 
 本套笔记只包含ES5内容。
 
-JavaScript是一种弱类型编程语言，变量没有类型。
-
 ## 数据类型
 
 **原始类型：** String、Number、Boolean、undefined、null
