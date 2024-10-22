@@ -1,34 +1,39 @@
 [
-    {
-      "type": "section-header",
-      "label": "HTML"
-    },
-    "html",
-    "html5",
-    {
-      "type": "divider",
-      "dashed": true
-    },
-    {
-      "type": "section-header",
-      "label": "CSS"
-    },
-    "css",
-    "css3",
-    {
-        "type": "divider",
-        "dashed": true
-    },
-    {
-          "type": "section-header",
-          "label": "JavaScript"
-    },
-    "jsbase",
-    "jsheight",
-    "jsdom",
-    "jsbom",
-    "regexp",
-    "module",
-    "promise",
-    "promise2"
-  ]
+  {
+    "type": "section-header",
+    "label": "HTML"
+  },
+  "html",
+  "html5",
+  {
+    "type": "divider",
+    "dashed": true
+  },
+  {
+    "type": "section-header",
+    "label": "CSS"
+  },
+  "css",
+  "css3",
+  {
+    "type": "divider",
+    "dashed": true
+  },
+  {
+    "type": "section-header",
+    "label": "JavaScript"
+  },
+  "jsbase",
+  "jsheight",
+  "jsdom",
+  "jsbom",
+  "regexp",
+  "module",
+  "promise",
+  "promise2",
+  {
+    "type": "section-header",
+    "label": "HTTP"
+  },
+  "http"
+]

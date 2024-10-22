@@ -25,5 +25,6 @@
             "type": "section-header",
             "label": "工具"
     },
-    "typescript"
+    "typescript",
+    "git"
   ]
