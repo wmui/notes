@@ -25,6 +25,8 @@
     },
     "jsbase",
     "jsheight",
+    "jsdom",
+    "jsbom",
     "regexp",
     "module",
     "promise",

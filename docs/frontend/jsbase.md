@@ -1314,3 +1314,695 @@ console.log(p.hasOwnProperty("sayHello")) // false
 console.log(Object.hasOwn(p, "sayHello")) // false
 ```
 
+## 数组
+
+```js
+
+- 数组也是一种复合数据类型，在数组可以存储多个不同类型的数据
+- 数组中存储的是有序的数据，数组中的每个数据都有一个唯一的索引可以通过索引来操作获取数据
+- 数组中存储的数据叫做元素
+- 索引（index）是一组大于0的整数
+- 创建数组
+通过Array()来创建数组，也可以通过[]来创建数组
+
+- 向数组中添加元素
+语法：
+    数组[索引] = 元素
+
+- 读取数组中的元素
+语法：
+    数组[索引]
+    - 如果读取了一个不存在的元素，不好报错而是返回undefined
+
+- length
+- 获取数组的长度
+- 获取的实际值就是数组的最大索引 + 1
+- 向数组最后添加元素：
+    数组[数组.length] = 元素
+- length是可以修改的
+```
+
+### 遍历
+
+任何类型的值都可以成为数组中的元素，创建数组时尽量要确保数组中存储的数据的类型是相同。
+
+for-of语句可以用来遍历可迭代对象
+
+```js
+语法：
+    for(变量 of 可迭代的对象){
+        语句...
+    }
+
+执行流程：
+    for-of的循环体会执行多次，数组中有几个元素就会执行几次，
+        每次执行时都会将一个元素赋值给变量
+```
+
+### 方法
+
+不改变原数组的方法（非破坏性方法）
+
+```js
+Array.isArray()
+    - 用来检查一个对象是否是数组    
+
+at()
+    - 可以根据索引获取数组中的指定元素
+    - at可以接收负索引作为参数
+concat()
+    - 用来连接两个或多个数组
+    - 非破坏性方法，不会影响原数组，而是返回一个新的数组
+indexOf()
+    - 获取元素在数组中第一次出现的索引
+    - 参数：
+        1. 要查询的元素
+        2. 查询的其实位置
+lastIndexOf()
+    - 获取元素在数组中最后一次出现的位置
+
+    - 返回值：
+        找到了则返回元素的索引，
+        没有找到返回-1
+
+join()
+    - 将一个数组中的元素连接为一个字符串
+    - ["孙悟空", "猪八戒", "沙和尚", "唐僧", "沙和尚"] -> "孙悟空,猪八戒,沙和尚,唐僧,沙和尚"
+    - 参数：
+        指定一个字符串作为连接符
+
+slice()
+    - 用来截取数组（非破坏性方法）     
+    - 参数：
+        1. 截取的起始位置（包括该位置）
+        2. 截取的结束位置（不包括该位置）   
+            - 第二个参数可以省略不写，如果省略则会一直截取到最后
+            - 索引可以是负值
+
+        如果将两个参数全都省略，则可以对数组进行浅拷贝（浅复制）
+```
+
+改变原数组的方法（破坏性方法）
+
+```js
+push()
+    - 向数组的末尾添加一个或多个元素，并返回新的长度
+pop()
+    - 删除并返回数组的最后一个元素
+unshift()
+    - 向数组的开头添加一个或多个元素，并返回新的长度
+shift()
+    - 删除并返回数组的第一个元素
+splice()
+    - 可以删除、插入、替换数组中的元素
+    - 参数：
+        1. 删除的起始位置
+        2. 删除的数量
+        3. 要插入的元素
+
+    - 返回值：
+        - 返回被删除的元素
+reverse()
+    - 反转数组
+```
+
+### 深拷贝和浅拷贝
+
+浅拷贝（shallow copy）
+    - 通常对对象的拷贝都是浅拷贝
+    - 浅拷贝顾名思义，只对对象的浅层进行复制（只复制一层）
+    - 如果对象中存储的数据是原始值，那么拷贝的深浅是不重要
+    - 浅拷贝只会对对象本身进行复制，不会复制对象中的属性（或元素）
+
+深拷贝（deep copy）
+    - 深拷贝指不仅复制对象本身，还复制对象中的属性和元素
+    - 因为性能问题，通常情况不太使用深拷贝
+
+... (展开运算符)
+    - 可以将一个数组中的元素展开到另一个数组中或者作为函数的参数传递
+    - 通过它也可以对数组进行浅复制
+
+对象的复制
+    - Object.assign(目标对象, 被复制的对象)，将被复制对象中的属性复制到目标对象里，并将目标对象返回
+    - 也可以使用展开运算符对对象进行复制
+
+```js
+const arr = ["孙悟空", "猪八戒", "沙和尚"]
+const arr2 = arr.slice()
+const arr3 = [...arr]
+
+const obj = { name: "孙悟空", age: 18 }
+const obj2 = { address: "花果山", age: 28 }
+const obj4 = Object.assign(obj2, obj)
+const obj3 = { address: "高老庄", ...obj, age: 48 } // 将obj中的属性在新对象中展开
+```
+
+### 排序
+
+```js
+sort()
+- sort用来对数组进行排序（会对改变原数组）
+- sort默认会将数组升序排列
+    注意：sort默认会按照Unicode编码进行排序，所以如果直接通过sort对数字进行排序
+        可能会得到一个不正确的结果
+- 参数：
+    - 可以传递一个回调函数作为参数，通过回调函数来指定排序规则
+        (a, b) => a - b 升序排列
+        (a, b) => b - a 降序排列
+    
+let arr = [2, 3, 1, 9, 0, 4, 5, 7, 8, 6, 10]
+arr.sort((a, b) => a - b)
+arr.sort((a, b) => b - a)
+```
+
+### 高阶方法
+
+```js
+
+forEach()
+    - 用来遍历数组
+    - 它需要一个回调函数作为参数，这个回调函数会被调用多次
+        数组中有几个元素，回调函数就会调用几次
+        每次调用，都会将数组中的数据作为参数传递
+    - 回调函数中有三个参数：
+        element 当前的元素
+        index 当前元素的索引
+        array 被遍历的数组
+
+filter()
+    - 将数组中符合条件的元素保存到一个新数组中返回
+    - 需要一个回调函数作为参数，会为每一个元素去调用回调函数，并根据返回值来决定是否将元素添加到新数组中
+    - 非破坏性方法，不会影响原数组
+
+map()
+    - 根据当前数组生成一个新数组
+    - 需要一个回调函数作为参数，
+        回调函数的返回值会成为新数组中的元素
+    - 非破坏性方法不会影响原数组
+
+reduce()
+    - 可以用来将一个数组中的所有元素整合为一个值
+    - 参数：
+        1. 回调函数，通过回调函数来指定合并的规则
+        2. 可选参数，初始值
+```
+
+### arguments
+
+```
+- arguments是函数中又一个隐含参数
+- arguments是一个类数组对象（伪数组）
+    和数组相似，可以通过索引来读取元素，也可以通过for循环变量，但是它不是一个数组对象，不能调用数组的方法
+- arguments用来存储函数的实参，
+    无论用户是否定义形参，实参都会存储到arguments对象中
+    可以通过该对象直接访问实参
+```
+
+```js
+function fn() {
+
+console.log(arguments[2])
+// false
+console.log(Array.isArray(arguments))
+// ok
+for (let i = 0; i < arguments.length; i++) {
+    console.log(arguments[i])
+}
+// ok
+for(let v of arguments){
+    console.log(v)
+}
+
+// 报错
+// arguments.forEach((ele) => console.log(ele))
+}
+
+fn(1, 10, 33)
+```
+
+### 可变参数
+
+在定义函数时可以将参数指定为可变参数
+
+- 可变参数可以接收任意数量实参，并将他们统一存储到一个数组中返回
+- 可变参数的作用和arguments基本是一致，但是也具有一些不同点：
+    1. 可变参数的名字可以自己指定
+    2. 可变参数就是一个数组，可以直接使用数组的方法
+    3. 可变参数可以配合其他参数一起使用
+
+```js
+// 当可变参数和普通参数一起使用时，需要将可变参数写到最后
+function fn3(a, b, ...args) {
+    for (let v of arguments) {
+        console.log(v)
+    }
+
+    console.log(args)
+}
+
+fn3(123, 456, "hello", true, "1111")
+```
+
+### call()、apply()
+
+调用函数除了通过 `函数()` 这种形式外，还可以通过其他的方式来调用函数
+
+比如，我们可以通过调用函数的call()和apply()来个方法来调用函数，通过call和apply调用的函数，它们的第一个参数就是函数的this
+
+- 通过call方法调用函数，函数的实参直接在第一个参数后一个一个的列出来
+- 通过apply方法调用函数，函数的实参需要通过一个数组传递
+
+```js
+const obj = { name: "孙悟空"}
+
+function fn(a,b) {
+    console.log(this, this.name, a, b)
+}
+
+fn.call(obj,1,2);
+```
+
+## 解构赋值
+
+```js
+const arr = ["孙悟空", "猪八戒", "沙和尚"]
+
+let a,b,c
+;[a, b, c] = arr // 解构赋值
+
+// 解构数组时，可以使用...来设置获取多余的元素
+let [n1, n2, ...n3] = [4, 5, 6, 7]
+
+// 可以通过解构赋值来快速交换两个变量的值
+ let a1 = 10
+ let a2 = 20
+;[a1, a2] = [a2, a1]
+
+
+```
+
+```js
+ const obj = { name: "孙悟空", age: 18, gender: "男" }
+ //  没有的属性返回undefined，可以重新赋值
+ let {name:a, age:b, gender:c, address:d="花果山"} = obj
+ ```
+
+## 对象序列化
+
+```js
+- JS中的对象使用时都是存在于计算机的内存中的
+- 序列化指将对象转换为一个可以存储的格式
+在JS中对象的序列化通常是将一个对象转换为字符串（JSON字符串）
+- 序列化的用途（对象转换为字符串有什么用）：
+- 对象转换为字符串后，可以将字符串在不同的语言之间进行传递
+    甚至人可以直接对字符串进行读写操作，使得JS对象可以不同的语言之间传递
+- 用途：
+    1. 作为数据交换的格式
+    2. 用来编写配置文字
+- 如何进行序列化：
+- 在JS中有一个工具类 JSON （JavaScript Object Notation） JS对象表示法
+- JS对象序列化后会转换为一个字符串，这个字符串我们称其为JSON字符串  
+
+- 也可以手动的编写JSON字符串，在很多程序的配置文件就是使用JSON编写的
+- 编写JSON的注意事项：
+1. JSON字符串有两种类型：
+    JSON对象 {}
+    JSON数组 []
+2. JSON字符串的属性名必须使用双引号引起来
+3. JSON中可以使用的属性值（元素）
+    - 数字（Number）
+    - 字符串（String） 必须使用双引号
+    - 布尔值（Boolean）
+    - 空值（Null）
+    - 对象（Object {}）
+    - 数组（Array []）
+4. JSON的格式和JS对象的格式基本上一致的，
+    注意：JSON字符串如果属性是最后一个，则不要再加,
+```
+
+```js
+ const obj = {
+    name: "孙悟空",
+    age: 18,
+}
+
+// 将obj转换为JSON字符串
+const str = JSON.stringify(obj) //JSON.stringify() 可以将一个对象转换为JSON字符串
+
+const obj2 = JSON.parse(str) // JSON.parse() 可以将一个JSON格式的字符串转换为JS对象
+
+```
+
+## Map
+
+```js
+- Map用来存储键值对结构的数据（key-value）
+- Object中存储的数据就可以认为是一种键值对结构
+- Map和Object的主要区别：
+    - Object中的属性名只能是字符串或符号，如果传递了一个其他类型的属性名，
+        JS解释器会自动将其转换为字符串
+    - Map中任何类型的值都可以称为数据的key
+
+创建：
+    new Map()
+
+属性和方法：
+    map.size() 获取map中键值对的数量
+    map.set(key, value) 向map中添加键值对
+    map.get(key) 根据key获取值   
+    map.delete(key) 删除指定数据
+    map.has(key) 检查map中是否包含指定键
+    map.clear() 删除全部的键值对
+    map.keys() - 获取map的所有的key
+    map.values() - 获取map的所有的value
+```
+
+```js
+const map = new Map()
+
+map.set("name", "孙悟空")
+map.set("age", 18)
+map.set({}, "呵呵")
+map.set(NaN, "哈哈哈")
+
+// 将map转换为数组
+const arr = Array.from(map) // [["name","孙悟空"],["age",18]]
+const arr2 = [...map]
+
+// 将数组转为map
+const map2 = new Map([
+    ["name", "猪八戒"],
+    ["age", 18],
+    [{}, () => {}],
+])
+
+// 遍历map
+for (const [key, value] of map) {
+    console.log(key, value)
+}
+
+map.forEach((key, value)=>{
+    console.log(key, value)
+})
+```
+## Set
+
+```js
+Set
+    - Set用来创建一个集合
+    - 它的功能和数组类似，不同点在于Set中不能存储重复的数据
+
+- 使用方式：
+    创建
+        - new Set()
+        - new Set([...])
+
+    方法
+        size 获取数量
+        add() 添加元素
+        has() 检查元素
+        delete() 删除元素
+```
+
+```js
+const set = new Set()
+
+// 向set中添加数据
+set.add(10)
+set.add("孙悟空")
+set.add(10)
+
+// 将set转为数组
+const arr = Array.from(set);
+const arr2 = [...set];
+
+// 将数组转为set
+const set2 = new Set([10, '孙悟空']);
+
+// 数组去重
+const arr3 = [1,2,2,4,3,3,4,3,6,7]
+
+const arr4 = [...new Set(arr)];// 等价于 Array.from(new Set(arr));
+```
+
+## Math
+
+```js
+Math
+- Math一个工具类
+- Math中为我们提供了数学运算相关的一些常量和方法
+- 常量：
+    Math.PI 圆周率
+- 方法：
+    Math.abs() 求一个数的绝对值
+    Math.min() 求多个值中的最小值
+    Math.max() 求多个值中的最大值
+    Math.pow() 求x的y次幂
+    Math.sqrt() 求一个数的平方根
+
+    Math.floor() 向下取整
+    Math.ceil() 向上取整
+    Math.round() 四舍五入取整
+    Math.trunc() 直接去除小数位
+
+    Math.random() 生成一个0-1之间的随机数
+```
+
+获取0-100的随机数
+
+```js
+const n = Math.round(Math.random() * 100)
+```
+
+获取n-m的随机数
+
+```js
+const n = Math.round(Math.random() * (m - n) + n);
+```
+
+## Date
+
+```js
+Date
+- 在JS中所有的和时间相关的数据都由Date对象来表示
+- 对象的方法：
+    getFullYear() 获取4位年份
+    getMonth() 返当前日期的月份（0-11）
+    getDate() 返回当前是几日
+    getDay() 返回当前日期是周几（0-6） 0表示周日
+    ......
+
+    getTime() 返回当前日期对象的时间戳
+        时间戳：自1970年1月1日0时0分0秒到当前时间所经历的毫秒数
+        计算机底层存储时间时，使用都是时间戳
+    Date.now() 获取当前的时间戳
+```
+
+```js
+// 直接通过new Date()创建时间对象时，它创建的是当前的时间的对象
+let d = new Date() 
+
+// 可以在Date()的构造函数中，传递一个表示时间的字符串
+// 字符串的格式：月/日/年 时:分:秒
+d = new Date("12/23/2019 23:34:35")
+
+// 年-月-日T时:分:秒
+d = new Date("2019-12-23T23:34:35")
+
+// new Date(年份, 月, 日, 时, 分, 秒, 毫秒)
+d = new Date(2016, 0, 1, 13, 45, 33)
+
+```
+
+### 日期格式化
+
+```js
+toLocaleDateString() 
+- 将日期转换为本地的字符串
+
+toLocaleTimeString() 
+- 将时间转换为本地的字符串
+
+toLocaleString()
+- 可以将一个日期和时间转换为本地时间格式的字符串
+- 参数：
+1. 描述语言和国家信息的字符串
+    zh-CN 中文中国
+    zh-HK 中文香港
+    en-US 英文美国
+2. 需要一个对象作为参数，在对象中可以通过对象的属性来对日期的格式进行配置
+        dateStyle 日期的风格
+        timeStyle 时间的风格
+            full
+            long
+            medium
+            short
+        hour12 是否采用12小时值
+            true
+            false
+        weekday 星期的显示方式
+            long
+            short
+            narrow
+
+        year
+            numeric
+            2-digit
+```
+
+```js
+const d = new Date()
+result = d.toLocaleString("zh-CN", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+    weekday: "short",
+})
+
+console.log(result)
+```
+
+## 包装类
+
+```js
+在JS中，除了直接创建原始值外，也可以创建原始值的对象
+
+    通过 new String() 可以创建String类型的对象
+    通过 new Number() 可以创建Number类型的对象
+    通过 new Boolean() 可以创建Boolean类型的对象
+        - 但是千万不要这么做，因为返回值是一个Object
+
+包装类：
+    JS中一共有5个包装类
+        String --> 字符串包装为String对象
+        Number --> 数值包装为Number对象
+        Boolean --> 布尔值包装为Boolean对象
+        BigInt --> 大整数包装为BigInt对象
+        Symbol --> 符号包装为Symbol对象
+        - 通过包装类可以将一个原始值包装为一个对象，
+            当我们对一个原始值调用方法或属性时，JS解释器会临时将原始值包装为对应的对象
+                然后调用这个对象的属性或方法
+
+    - 由于原始值会被临时转换为对应的对象，这就意味着对象中的方法都可以直接通过原始值来调用
+```
+
+```js
+let str = "hello"
+// 添加属性不会报错，但是由于是临时的，所以取法读取到
+str.name = "哈哈"
+
+let num = 11
+num = num.toString()
+```
+
+## String
+
+```js
+字符串：
+- 字符串其本质就是一个字符数组
+- "hello" --> ["h", "e", "l", "l", "o"]
+- 字符串的很多方法都和数组是非常类似的
+- 属性和方法：
+length 获取字符串的长度
+字符串[索引] 获取指定位置的字符
+str.at() （实验方法）
+    - 根据索引获取字符，可以接受负索引
+str.charAt()
+    - 根据索引获取字符
+str.concat()
+    - 用来连接两个或多个字符串
+str.includes()
+    - 用来检查字符串中是否包含某个内容
+        有返回true
+        没有返回false
+str.indexOf()
+str.lastIndexOf()
+    - 查询字符串中是否包含某个内容
+str.startsWith()
+    - 检查一个字符串是否以指定内容开头
+str.endsWith()
+    - 检查一个字符串是否以指定内容结尾
+str.padStart()
+str.padEnd()
+    - 通过添加指定的内容，使字符串保持某个长度
+str.replace()
+    - 使用一个新字符串替换一个指定内容
+str.replaceAll()    
+    - 使用一个新字符串替换所有指定内容
+str.slice()
+    - 对字符串进行切片
+str.substring()
+    - 截取字符串
+str.split()
+    - 用来将一个字符串拆分为一个数组
+str.toLowerCase()
+    - 将字符串转换为小写
+str.toUpperCase()
+    - 将字符串转换为大写
+str.trim()
+    - 去除前后空格
+str.trimStart()
+    - 去除开始空格
+str.trimEnd()
+    - 去除结束空格
+```
+
+```js
+ split()
+    - 可以根据正则表达式来对一个字符串进行拆分
+search()
+    - 可以去搜索符合正则表达式的内容第一次在字符串中出现的位置
+replace()
+    - 根据正则表达式替换字符串中的指定内容
+match()
+    - 根据正则表达式去匹配字符串中符合要求的内容
+matchAll()
+    - 根据正则表达式去匹配字符串中符合要求的内容(必须设置g 全局匹配)
+    - 它返回的是一个迭代器
+```
+
+```js
+let str = "a@b@c@d"
+
+let result = str.split("@")
+
+str = "孙悟空abc猪八戒adc沙和尚"
+result = str.split(/a[bd]c/)
+```
+
+```js
+let str = "dajsdh13715678903jasdlakdkjg13457890657djashdjka13811678908sdadsd"
+
+// -1
+result = str.search("abc")
+// 6
+result = str.search(/1[3-9]\d{9}/)
+// dajsdh哈哈哈jasdlakdkjg哈哈哈djashdjka哈哈哈sdadsd
+result = str.replace(/1[3-9]\d{9}/g, "哈哈哈")
+
+// ['13715678903', '13457890657', '13811678908']
+result = str.match(/1[3-9]\d{9}/g)
+
+// RegExpStringIterator {}，需要遍历才能用，item是一个类数组，包含组匹配的内容
+result = str.matchAll(/1[3-9](\d{9})/g)
+
+
+//  13715678903 715678903
+//  13457890657 457890657
+//  13811678908 811678908
+for(let item of result){
+    console.log(item[0], item[1])
+}
+```
+
+## RegExp
+
+[正则表达式](./regexp.md)
+
+## DOM
+
+[JavaScript DOM](./jsdom.md)
+
+## BOM
+
+[JavaScript BOM](./jsbom.md)
