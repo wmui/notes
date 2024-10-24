@@ -4,8 +4,12 @@
     "link": "/frontend/html",
     "activeMatch": "^/frontend/"
   },{
-    "text": "框架库",
+    "text": "框架",
     "link": "/frame/vue3",
     "activeMatch": "^/frame/"
+  },{
+    "text": "工具",
+    "link": "/tools/git",
+    "activeMatch": "^/tools/"
   }
 ]
