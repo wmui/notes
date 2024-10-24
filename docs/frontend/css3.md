@@ -1198,3 +1198,20 @@ BFC 是 Block Formatting Context （块级格式上下文），可以理解成�
 设置 column-span 为 all（即使该元素没有包裹在多列容器中）
 
 [查看示例](https://kt3xj5-3000.csb.app/4_CSS3/17_BFC/)
+
+## viewport
+
+viewport视口，表示浏览器进行网页布局时的区域，浏览器是根据视口进行布局的。在桌面端，通常视口宽度等于设备的宽度；而在手机端，为了更好的呈现早期的PC网页，不同的浏览器都把视口定义的比手机屏幕要宽。
+
+手机端网页布局方案，常用的有两种，vw和rem。
+
+### vw（推荐）
+
+根据设计稿尺寸，结合[postcss-px-to-viewport](https://github.com/evrone/postcss-px-to-viewport)插件，相当于是百分比布局，100vw等于100%屏幕宽度，编码时按照`px`编写，计算也不用考虑DPR。
+
+`100px = (100 / 750) * 100vw`
+
+### rem（不推荐）
+
+根据屏幕尺寸、设计稿尺寸、DPR值，动态计算出基准字体大小和scale值，rem方案模拟的是vw，由于vw单位兼容性不好，这是当时的过渡方案，所以不推荐这种方案了。
+
