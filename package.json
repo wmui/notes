@@ -11,6 +11,7 @@
     "rspress": "^1.29.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
     "@rspress/plugin-preview": "1.29.0",
     "@types/node": "^16"
   }
