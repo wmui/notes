@@ -18,6 +18,11 @@
     "react-router-dom",
     "redux",
     {
+      "type": "section-header",
+      "label": "小程序"
+    },
+    "miniprogram",
+    {
         "type": "divider",
         "dashed": true
     },
