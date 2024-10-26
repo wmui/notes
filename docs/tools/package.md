@@ -59,10 +59,10 @@ echo "export default {extends: ['@commitlint/config-conventional']};" > commitli
 npm i husky -D
 
 # 初始化husky
-npx husky install
+npx husky init
 
 # 添加commit-msg钩子
-npx husky add .husky/commit-msg 'npx --no -- commitlint --edit $1'
+echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
 
 # 验证是否有效
 git commit -am "fix: test"
@@ -80,4 +80,3 @@ test：增加测试
 chore：构建过程或辅助工具的变动
 ```
 
-test

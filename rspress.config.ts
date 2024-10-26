@@ -1,6 +1,6 @@
 import * as path from "path";
 import { defineConfig } from "rspress/config";
-import { pluginPreview } from '@rspress/plugin-preview';
+// import { pluginPreview } from '@rspress/plugin-preview';
 
 export default defineConfig({
   root: path.join(__dirname, "docs"),
@@ -17,12 +17,12 @@ export default defineConfig({
   markdown: {
     // defaultWrapCode: true,
   },
-  plugins: [
-    pluginPreview({
-      iframeOptions: {devPort: 7891},
-      defaultRenderMode: 'pure',
-    }),
-  ],
+  // plugins: [
+  //   pluginPreview({
+  //     iframeOptions: {devPort: 7891},
+  //     defaultRenderMode: 'pure',
+  //   }),
+  // ],
   themeConfig: {
     outlineTitle: "目录",
     editLink: {
