@@ -16,6 +16,9 @@ export default defineConfig({
   },
   markdown: {
     // defaultWrapCode: true,
+    highlightLanguages: [
+      ['sh', 'bash'],
+    ],
   },
   // plugins: [
   //   pluginPreview({

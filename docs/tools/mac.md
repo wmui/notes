@@ -1,4 +1,6 @@
-# Mac常用软件
+# Mac
+
+Mac中常用软件和配置
 
 ## clash
 
@@ -10,6 +12,10 @@
 tun模式下载homebrew
 
 ```sh
+# Homebrew 需要 Apple Xcode 中的 Xcode 命令行工具
+xcode-select --install
+
+# 安装Homebrew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
