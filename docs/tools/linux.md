@@ -387,3 +387,37 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@xxx.xxx.xx.xx
 # 如果复制失败，修改ssh权限
 chmod 700 -R .ssh && cd .ssh && chmod 600 authorized_keys
 ```
+
+## 配置代理
+
+解决服务器下载软件慢的问题
+
+### 方式一
+
+让服务器使用本机的代理
+
+```sh
+# 用命令远程端口转发
+ssh -CR 7890::7890 
+
+# 在云服务器上添加代理配置，就能用本地的代理软件了
+export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
+```
+### 方式二
+
+服务器使用[代理软件](github.com/mzz2017/gg)
+
+```sh
+# 下载
+sudo sh -c "$(curl -L https://github.com/mzz2017/gg/raw/main/release/go.sh)"
+
+# 查看是否安装成功
+gg --version
+
+# 配置订阅地址
+gg config -w subscription='https://example.com/path/to/sub'
+
+# 查看配置
+gg config
+```
+

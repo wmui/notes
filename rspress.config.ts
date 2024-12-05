@@ -4,7 +4,7 @@ import { defineConfig } from "rspress/config";
 
 export default defineConfig({
   root: path.join(__dirname, "docs"),
-  title: "胖胖熊笔记",
+  title: "前后端知识分享",
   description: "记录我的学习笔记",
   icon: "/logo.png",
   logo: {
@@ -38,7 +38,7 @@ export default defineConfig({
     searchNoResultsText: "未搜索到相关结果",
     searchSuggestedQueryText: "可更换不同的关键字后重试",
     footer: {
-      message: "© 2024 胖胖熊笔记 Inc. All Rights Reserved.",
+      message: "© 2024 ppx.link Inc. All Rights Reserved. <a href='https://beian.miit.gov.cn/'>豫ICP备2022012304号-1</a>",
     },
   },
 });
