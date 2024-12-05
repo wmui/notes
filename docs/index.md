@@ -2,7 +2,7 @@
 pageType: home
 
 hero:
-  name: 胖胖熊笔记
+  name: 前后端知识分享
   text: 记录我的学习笔记
   tagline: 好记性不如烂笔头
   actions:
